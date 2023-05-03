@@ -6,10 +6,11 @@ public class Driver {
     public static final int CHOICE_UPDATE_DELETE = 3;
     public static final int CHOICE_REPORT = 4;
     public static final int CHOICE_EXIT = 5;
+
+    public static final int MINIMUM_STUDENT_CREATED = 2;
     private int selection;
     private Scanner sc;
     private ManagementSystem ms;
-    private int studentNumber = 0;
 
     public Driver(ManagementSystem ms, Scanner sc) {
         this.ms = ms;
@@ -67,23 +68,18 @@ public class Driver {
         char continueOrNot;
         do {
             createNewStudent();
-            if (studentNumber > 9) {
-                System.out.println("Ban co muon tao hoc sinh tiep (Y/N) khong? ");
-                System.out.println("Chon Y de tiep tuc, N de quay lai man hinh chinh");
-                continueOrNot = sc.next().charAt(0);
-                if (continueOrNot == 'Y') {
-                    do {
-                        createNewStudent();
-                        studentNumber++;
-                        System.out.println("Ban co muon tao hoc sinh tiep (Y/N) khong? ");
-                        System.out.println("Chon Y de tiep tuc, N de quay lai man hinh chinh");
-                        continueOrNot = sc.next().charAt(0);
-                    } while (continueOrNot == 'N');
-                } else if (continueOrNot == 'N') {
-                    break;
-                }
+        } while (ms.getNumStudents() < MINIMUM_STUDENT_CREATED);
+
+        do {
+            System.out.println("Ban co muon tao hoc sinh tiep (Y/N) khong? ");
+            System.out.println("Chon Y de tiep tuc, N de quay lai man hinh chinh");
+            continueOrNot = sc.next().charAt(0);
+            if (continueOrNot == 'Y') {
+                createNewStudent();
+            } else if (continueOrNot != 'N') {
+                System.out.println("Lua chon khong hop le");
             }
-        } while (studentNumber < 10);
+        } while (continueOrNot != 'N');
     }
 
     public void createNewStudent() {
@@ -101,7 +97,6 @@ public class Driver {
         System.out.println("Nhap ten khoa hoc (Java, .Net, C / C++): ");
         studentCourse = sc.next();
         ms.addStudent(new Student(studentId, studentName, studentYear, studentCourse));
-        studentNumber++;
     }
 }
 
