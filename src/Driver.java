@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Driver {
@@ -27,35 +28,31 @@ public class Driver {
         System.out.println("Nhap lua chon: ");
     }
 
-//    public static boolean testDigit(int selection) {
-//        boolean isDigit = false;
-//        if (selection == (int) selection) {
-//            isDigit = true;
-//        }
-//
-//        if (!isDigit) {
-//            throw new IllegalArgumentException("Yeu cau nhap so");
-//        }
-//        boolean answer = false;
-//
-//        if (selection < 5 && selection > 0) {
-//            answer = true;
-//        } else {
-//            System.out.println("Chi nhap lua chon trong 1 den 5");
-//        }
-//        return answer;
-//    }
+    public static boolean isValidSelection(String selection) {
+        boolean isDigit = false;
+        if (selection.length() > 1) {
+            throw new IllegalArgumentException("Chi nhap 1 so tu 1 den 5.");
+        } else if (selection.charAt(0) < '1' || selection.charAt(0) > '5') {
+            throw new IllegalArgumentException("Chi nhap 1 so trong khoang tu 1 den 5");
+        } else {
+            isDigit = true;
+        }
+        return isDigit;
+    }
 
     public void run() {
+        String selectionText;
         do {
             printMenu();
-            selection = sc.nextInt();
-//            try {
-//                testDigit(selection);
-//                testDigit('a');
-//            } catch (IllegalArgumentException e) {
-//                System.out.println("IllegalArgumentException => " + e.getMessage());
-//            }
+            try {
+                selectionText = sc.next();
+                isValidSelection(selectionText);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+                continue;
+            }
+
+            selection = Integer.parseInt(selectionText);
             if (selection == CHOICE_CREATE) {
                 runCreate();
             }
