@@ -42,4 +42,12 @@ public class Student {
     public void setCourse(String course) {
         this.course = course;
     }
+
+    public void displayInformation() {
+        System.out.printf("%s | %s | %s\n",
+                getName(),
+                getYear(),
+                getCourse());
+    }
+
 }

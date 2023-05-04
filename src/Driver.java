@@ -1,4 +1,6 @@
-import java.util.InputMismatchException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Driver {
@@ -55,9 +57,12 @@ public class Driver {
             selection = Integer.parseInt(selectionText);
             if (selection == CHOICE_CREATE) {
                 runCreate();
+            } else if (selection == CHOICE_SEARCH_SORT) {
+                runSearchSort();
             }
         } while (selection != CHOICE_EXIT);
     }
+
 
     public void runCreate() {
         System.out.println("Ban da chon: Tao sinh vien");
@@ -94,6 +99,27 @@ public class Driver {
         System.out.println("Nhap ten khoa hoc (Java, .Net, C / C++): ");
         studentCourse = sc.next();
         ms.addStudent(new Student(studentId, studentName, studentYear, studentCourse));
+    }
+
+    private void runSearchSort() {
+        String studentName;
+        String studentNameLowerCase;
+        ArrayList<Student> searchStudents = new ArrayList<Student>();
+//        do {
+        System.out.println("Nhap ten hoc sinh can tim: ");
+        studentName = sc.next();
+        studentNameLowerCase = studentName.toLowerCase();
+
+
+        for (int i = 0; i < ms.getStudents().size(); i++) {
+            if (ms.getStudents().get(i).getName().toLowerCase().contains(studentNameLowerCase)) {
+                searchStudents.add(ms.getStudents().get(i));
+                ms.getStudents().get(i).displayInformation();
+            }
+        }
+        Collections.sort(searchStudents, Comparators.NAMEANDID);
+
+//        } while (studentName.)
     }
 }
 
