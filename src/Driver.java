@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -102,24 +101,22 @@ public class Driver {
     }
 
     private void runSearchSort() {
-        String studentName;
-        String studentNameLowerCase;
-        ArrayList<Student> searchStudents = new ArrayList<Student>();
-//        do {
+
+        ArrayList<Student> results = new ArrayList<Student>();
         System.out.println("Nhap ten hoc sinh can tim: ");
-        studentName = sc.next();
-        studentNameLowerCase = studentName.toLowerCase();
-
-
+        String studentName = sc.next();
+        String studentNameLowerCase = studentName.toLowerCase();
         for (int i = 0; i < ms.getStudents().size(); i++) {
             if (ms.getStudents().get(i).getName().toLowerCase().contains(studentNameLowerCase)) {
-                searchStudents.add(ms.getStudents().get(i));
-                ms.getStudents().get(i).displayInformation();
+                results.add(ms.getStudents().get(i));
             }
         }
-        Collections.sort(searchStudents, Comparators.NAMEANDID);
 
-//        } while (studentName.)
+        Collections.sort(results, Comparators.NAMEANDID);
+        System.out.println("Ket qua tim kiem: ");
+        for (int i = 0; i < results.size(); i++) {
+            results.get(i).displayInformation();
+        }
     }
 }
 

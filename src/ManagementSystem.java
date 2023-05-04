@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class ManagementSystem implements Comparable<Student> {
+public class ManagementSystem {
     private ArrayList<Student> students;
 
     public ManagementSystem() {
@@ -45,24 +45,5 @@ public class ManagementSystem implements Comparable<Student> {
         }
         return null;
     }
-
-    @Override
-    public int compareTo(Student o) {
-        return Comparators.NAMEANDID.compare(searchStudent(o.getId()), o);
-    }
-
-//    public int compareStu() {
-//        Comparator<Student> NAMEANDAGE = new Comparator<Student>() {
-//            @Override
-//            public int compare(Student o1, Student o2) {
-//                int a = o1.getName().compareTo(o2.getName());
-//                if (a == 0) {
-//                    a = o1.getId() - o2.getId();
-//                }
-//                return a;
-//            }
-//        };
-//    }
-
 
 }
