@@ -1,3 +1,5 @@
+import models.ManagementSystem;
+
 import java.util.Scanner;
 
 public class Main {

@@ -1,3 +1,5 @@
+package models;
+
 public class Student {
     private String id;
     private String name;
@@ -44,7 +46,8 @@ public class Student {
     }
 
     public void displayInformation() {
-        System.out.printf("%s | %s | %s\n",
+        System.out.printf(" %s | %s | %s | %s\n",
+                getId(),
                 getName(),
                 getYear(),
                 getCourse());

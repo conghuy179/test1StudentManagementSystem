@@ -1,3 +1,7 @@
+import models.ManagementSystem;
+import models.Student;
+import util.Comparators;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -58,6 +62,10 @@ public class Driver {
                 runCreate();
             } else if (selection == CHOICE_SEARCH_SORT) {
                 runSearchSort();
+            } else if (selection == CHOICE_UPDATE_DELETE) {
+                runUpdateDelete();
+            } else if (selection == CHOICE_REPORT) {
+                runReport();
             }
         } while (selection != CHOICE_EXIT);
     }
@@ -75,12 +83,12 @@ public class Driver {
             System.out.println("Ban co muon tao hoc sinh tiep (Y/N) khong? ");
             System.out.println("Chon Y de tiep tuc, N de quay lai man hinh chinh");
             continueOrNot = sc.next().charAt(0);
-            if (continueOrNot == 'Y') {
+            if (continueOrNot == 'Y' || continueOrNot == 'y') {
                 createNewStudent();
-            } else if (continueOrNot != 'N') {
+            } else if (continueOrNot != 'N' && continueOrNot != 'n') {
                 System.out.println("Lua chon khong hop le");
             }
-        } while (continueOrNot != 'N');
+        } while (continueOrNot != 'N' && continueOrNot != 'n');
     }
 
     public void createNewStudent() {
@@ -116,6 +124,93 @@ public class Driver {
         System.out.println("Ket qua tim kiem: ");
         for (int i = 0; i < results.size(); i++) {
             results.get(i).displayInformation();
+        }
+    }
+
+    private void runUpdateDelete() {
+        String studentId;
+        do {
+            System.out.println("Nhap ID hoc sinh can tim: ");
+            studentId = sc.next();
+            if (!ms.isStudentExisted(studentId)) {
+                System.out.println("Sinh vien khong ton tai. Yeu cau nhap lai.");
+            }
+        } while (!ms.isStudentExisted(studentId));
+
+        System.out.println("Thong tin hoc sinh so ID " + studentId + " : ");
+        ms.searchStudent(studentId).displayInformation();
+
+        System.out.println("Ban muon cap nhat (U) hay xoa (D) hoc sinh? ");
+        char selection = sc.next().charAt(0);
+        if (selection == 'U' || selection == 'u') {
+            System.out.println("Bam 1 de cap nhat ID cua sinh vien");
+            System.out.println("Bam 2 de cap nhat ten cua sinh vien");
+            System.out.println("Bam 3 de cap nhat hoc ky (1 hoac 2) cua sinh vien");
+            System.out.println("Bam 4 de cap nhat ten khoa hoc (Java, .Net, C / C++) cua sinh vien");
+            int updateSelection = sc.nextInt();
+            String newId;
+            String newName;
+            int newYear;
+            String newCourse;
+            if (updateSelection == 1) {
+                do {
+                    System.out.println("Cap nhat ID: ");
+                    newId = sc.next();
+                    if (!ms.isStudentExisted(newId)) {
+                        System.out.println("Cap nhat ID thanh cong");
+                        ms.searchStudent(studentId).setId(newId);
+                    } else {
+                        System.out.println("ID da ton tai. Yeu cau nhap lai");
+                    }
+                } while (!ms.isStudentExisted(newId));
+            } else if (updateSelection == 2) {
+                do {
+                    System.out.println("Cap nhat ten: ");
+                    newName = sc.next();
+                    if (!ms.isStudentExisted(newName)) {
+                        ms.searchStudent(studentId).setName(newName);
+                        System.out.println("Cap nhat ten thanh cong!");
+                    } else {
+                        System.out.println("Trung ten. Yeu cau nhap lai");
+                    }
+                } while (ms.isStudentExisted(newName));
+            } else if (updateSelection == 3) {
+                do {
+                    System.out.println("Cap nhat hoc ky (1 hoac 2): ");
+                    newYear = sc.nextInt();
+                    if (newYear == 1 || newYear == 2) {
+                        ms.searchStudent(studentId).setYear(newYear);
+                        System.out.println("Cap nhat hoc ky thanh cong!");
+                    }
+                } while (newYear != 1 && newYear != 2);
+            } else if (updateSelection == 4) {
+                do {
+                    System.out.println("Cap nhat ten khoa hoc (Java, .Net, C / C++): ");
+                    newCourse = sc.next();
+                    if (!newCourse.equals("Java") &&
+                            !newCourse.equals(".Net") &&
+                            !newCourse.equals("C") &&
+                            !newCourse.equals("C++")) {
+                        System.out.println("Nhap sai khoa hoc. Yeu cau nhap lai");
+                    } else {
+                        ms.searchStudent(studentId).setCourse(newCourse);
+                        System.out.println("Cap nhat khoa hoc thanh cong!");
+                    }
+                } while (!newCourse.equals("Java") &&
+                        !newCourse.equals(".Net") &&
+                        !newCourse.equals("C") &&
+                        !newCourse.equals("C++"));
+            }
+        } else if (selection == 'D' || selection == 'd') {
+            ms.deleteStudent(studentId);
+        }
+    }
+
+    private void runReport() {
+        System.out.println("Bao cao sinh vien:");
+        System.out.println("So ID | Ten | Khoa hoc | Hoc ky | ");
+        for (int i = 0; i < ms.getStudents().size(); i++) {
+            ms.getStudents().get(i).displayInformation();
         }
     }
 }

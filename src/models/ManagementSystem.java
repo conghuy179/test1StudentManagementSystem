@@ -1,3 +1,5 @@
+package models;
+
 import java.util.ArrayList;
 
 public class ManagementSystem {
@@ -19,14 +21,12 @@ public class ManagementSystem {
         boolean existed = false;
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i).getId().equals(id)) {
-                System.out.println("ID sinh vien da ton tai.");
                 existed = true;
                 break;
             }
         }
         return existed;
     }
-
 
     public void addStudent(Student newStudent) {
         boolean isStudentExisted = isStudentExisted(newStudent.getId());
@@ -46,4 +46,11 @@ public class ManagementSystem {
         return null;
     }
 
+    public void deleteStudent(String id) {
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).getId().equals(id)) {
+                students.remove(i);
+            }
+        }
+    }
 }

@@ -1,3 +1,7 @@
+package util;
+
+import models.Student;
+
 import java.util.Comparator;
 
 public class Comparators {
