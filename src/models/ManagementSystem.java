@@ -29,6 +29,7 @@ public class ManagementSystem {
     }
 
     public void addStudent(Student newStudent) {
+        // them truong hop if newStudent = null -> khong duoc
         boolean isStudentExisted = isStudentExisted(newStudent.getId());
         if (!isStudentExisted) {
             students.add(newStudent);
@@ -47,6 +48,8 @@ public class ManagementSystem {
     }
 
     public void deleteStudent(String id) {
+        // dat 1 bien foundIndex
+        // Tim thay i trong students roi moi xoa
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i).getId().equals(id)) {
                 students.remove(i);

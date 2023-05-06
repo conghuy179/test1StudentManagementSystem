@@ -97,15 +97,115 @@ public class Driver {
         int studentYear;
         String studentCourse;
 
-        System.out.println("Nhap ID sinh vien: ");
-        studentId = sc.next();
-        System.out.println("Nhap ten sinh vien: ");
-        studentName = sc.next();
-        System.out.println("Nhap so hoc ky (1 hoac 2): ");
-        studentYear = sc.nextInt();
-        System.out.println("Nhap ten khoa hoc (Java, .Net, C / C++): ");
-        studentCourse = sc.next();
+        do {
+            System.out.println("Nhap ID sinh vien: ");
+            studentId = sc.next();
+            if (!isIdValid(studentId)) {
+                System.out.println("ID co do dai 5 chu so. Yeu cau nhap lai.");
+            }
+        } while (!isIdValid(studentId));
+
+        do {
+            System.out.println("Nhap ten sinh vien: ");
+            studentName = sc.next();
+            if (!isNameValid(studentName)) {
+                System.out.println("Ten gioi han 20 chu va khong co so. Yeu cau nhap lai.");
+            }
+        } while (!isNameValid(studentName));
+
+        do {
+            System.out.println("Nhap so hoc ky (1 hoac 2): ");
+            studentYear = sc.nextInt();
+            if (!isYearValid(studentYear)) {
+                System.out.println("So hoc ky phai la 1 hoac 2. Yeu cau nhap lai.");
+            }
+        } while (!isYearValid(studentYear));
+
+        do {
+            System.out.println("Nhap ten khoa hoc (Java, .Net, C / C++): ");
+            studentCourse = sc.next();
+            studentCourse = convertCourse(studentCourse);
+            if (!isCourseValid(studentCourse)) {
+                System.out.println("Ten khoa hoc phai thuoc 1 trong 4 khoa hoc (Java, .Net, C / C++).");
+                System.out.println("Yeu cau nhap lai.");
+            }
+        } while (!isCourseValid(studentCourse));
+
         ms.addStudent(new Student(studentId, studentName, studentYear, studentCourse));
+    }
+
+    public boolean isIdValid(String id) {
+        boolean result = true;
+        if (id.length() != 5) {
+            return false;
+        }
+        for (int i = 0; i < 5; i++) {
+            if (!Character.isDigit(id.charAt(i))) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+    public boolean isNameValid(String name) {
+        boolean result = true;
+        if (name.length() > 20) {
+            return false;
+        }
+//        for (int i = 0; i < 20; i++) {
+//            if (!Character.isDigit(name.charAt(i))) {
+//                result = false;
+//                break;
+//            }
+//        }
+        return result;
+    }
+
+    public boolean isYearValid(int year) {
+        boolean result = true;
+        if (year != 1 || year != 2) {
+            result = false;
+        }
+        return result;
+    }
+
+    public String convertCourse(String course) {
+        String correctCourseName = null;
+        if (course.equals("java")) {
+            correctCourseName = "Java";
+        } else if (course.equals(".net")) {
+            correctCourseName = ".Net";
+        } else if (course.equals("c")) {
+            correctCourseName = "C";
+        } else if (course.equals("c++")) {
+            correctCourseName = "C++";
+        } else if (course.equals("Java") ||
+                course.equals(".Net") ||
+                course.equals("C") ||
+                course.equals("C++")) {
+            return course;
+        }
+        return correctCourseName;
+    }
+    public boolean isCourseValid(String course) {
+        boolean result = true;
+        if (course.equals("java")) {
+            course = "Java";
+        } else if (course.equals(".net")) {
+            course = ".Net";
+        } else if (course.equals("c")) {
+            course = "C";
+        } else if (course.equals("c++")) {
+            course = "C++";
+        }
+
+        if (!course.equals("Java") &&
+                !course.equals(".Net") &&
+                !course.equals("C") &&
+                !course.equals("C++")) {
+            result = false;
+        }
+        return result;
     }
 
     private void runSearchSort() {
@@ -152,6 +252,7 @@ public class Driver {
             String newName;
             int newYear;
             String newCourse;
+
             if (updateSelection == 1) {
                 do {
                     System.out.println("Cap nhat ID: ");
@@ -164,6 +265,7 @@ public class Driver {
                     }
                 } while (!ms.isStudentExisted(newId));
             } else if (updateSelection == 2) {
+                // TODO: HAM SAI ROI SUA DI
                 do {
                     System.out.println("Cap nhat ten: ");
                     newName = sc.next();
