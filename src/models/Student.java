@@ -30,6 +30,10 @@ public class Student {
         this.name = name;
     }
 
+    public void setFamilyAndLastName(String familyName, String lastName) {
+        this.name = familyName + ' ' + lastName;
+    }
+
     public int getYear() {
         return year;
     }
