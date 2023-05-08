@@ -29,12 +29,12 @@ public class ManagementSystem {
     }
 
     public void addStudent(Student newStudent) {
-        // them truong hop if newStudent = null -> khong duoc
+        if (newStudent == null) {
+            System.out.println("Khong the them hoc sinh nay.");
+        }
         boolean isStudentExisted = isStudentExisted(newStudent.getId());
         if (!isStudentExisted) {
             students.add(newStudent);
-        } else {
-            System.out.println("Da co hoc sinh nay trong danh sach");
         }
     }
 
@@ -48,12 +48,37 @@ public class ManagementSystem {
     }
 
     public void deleteStudent(String id) {
-        // dat 1 bien foundIndex
-        // Tim thay i trong students roi moi xoa
+        int foundIndex = -1;
+        if (searchStudent(id) == null) {
+            System.out.println("Khong tim thay sinh vien.");
+        } else {
+            for (int i = 0; i < students.size(); i++) {
+                if (students.get(i).getId().equals(id)) {
+                    foundIndex = i;
+                }
+            }
+            students.remove(foundIndex);
+        }
+    }
+
+    public Student searchStudentLastName(String lastName) {
         for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getId().equals(id)) {
-                students.remove(i);
+            if (lastName.equals(students.get(i).getLastName())) {
+                return students.get(i);
             }
         }
+        return null;
+    }
+
+    public ArrayList<Student> searchSortStudent(String name) {
+        ArrayList<Student> results = new ArrayList<Student>();
+        String nameLowerCase = name.toLowerCase();
+
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).getLastName().toLowerCase().contains(nameLowerCase)) {
+                results.add(students.get(i));
+            }
+        }
+        return results;
     }
 }

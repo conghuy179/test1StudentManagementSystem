@@ -4,7 +4,6 @@ import util.Comparators;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Driver {
@@ -14,7 +13,7 @@ public class Driver {
     public static final int CHOICE_REPORT = 4;
     public static final int CHOICE_EXIT = 5;
 
-    public static final int MINIMUM_STUDENT_CREATED = 2;
+    public static final int MINIMUM_STUDENT_CREATED = 10;
     private int selection;
     private Scanner sc;
     private ManagementSystem ms;
@@ -81,7 +80,7 @@ public class Driver {
         } while (ms.getNumStudents() < MINIMUM_STUDENT_CREATED);
 
         do {
-            System.out.println("Ban co muon tao hoc sinh tiep (Y/N) khong? ");
+            System.out.println("Ban co muon tao sinh vien tiep (Y/N) khong? ");
             System.out.println("Chon Y de tiep tuc, N de quay lai man hinh chinh");
             continueOrNot = sc.next().charAt(0);
             if (continueOrNot == 'Y' || continueOrNot == 'y') {
@@ -94,8 +93,9 @@ public class Driver {
 
     public void createNewStudent() {
         String studentId;
-        String studentName;
-        int studentYear;
+        String studentFamilyName;
+        String studentLastName;
+        String studentYear;
         String studentCourse;
 
         do {
@@ -103,39 +103,40 @@ public class Driver {
             studentId = sc.next();
             if (!isIdValid(studentId)) {
                 System.out.println("ID co do dai 5 chu so. Yeu cau nhap lai.");
+            } else if (ms.isStudentExisted(studentId)) {
+                System.out.println("Sinh vien da ton tai. Yeu cau nhap lai.");
             }
-        } while (!isIdValid(studentId));
+        } while (!isIdValid(studentId) || ms.isStudentExisted(studentId));
 
         do {
             System.out.println("Nhap ho cua sinh vien: ");
-            String studentFamilyName = sc.next();
+            studentFamilyName = sc.next();
             if (!isNameValid(studentFamilyName)) {
                 System.out.println("Ho gioi han 20 chu va khong co so. Yeu cau nhap lai.");
             }
             System.out.println("Nhap ten cua sinh vien: ");
-            String studentLastName = sc.next();
+            studentLastName = sc.next();
             if (!isNameValid(studentLastName)) {
                 System.out.println("Ten gioi han 20 chu va khong co so. Yeu cau nhap lai.");
             }
-            studentName = studentFamilyName + ' ' + studentLastName;
-        } while (!isNameValid(studentName));
+        } while (!isNameValid(studentFamilyName) && !isNameValid(studentLastName));
 
-        int studentYearAfterValidation = 0;
+        int studentYearAfterValidation = -1;
         do {
             System.out.println("Nhap so hoc ky (1 hoac 2): ");
             try {
-                studentYear = sc.nextInt();
+                studentYear = sc.next();
                 isYearValid(studentYear);
-            } catch (InputMismatchException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Chi nhap hoc ky 1 hoac 2. Yeu cau nhap lai.");
                 continue;
             }
 
-            studentYearAfterValidation = studentYear;
-            if (!isYearValid(studentYearAfterValidation)) {
+            studentYearAfterValidation = Integer.parseInt(studentYear);
+            if (studentYearAfterValidation != 1 && studentYearAfterValidation != 2) {
                 System.out.println("So hoc ky phai la 1 hoac 2. Yeu cau nhap lai.");
             }
-        } while (!isYearValid(studentYearAfterValidation));
+        } while (studentYearAfterValidation != 1 && studentYearAfterValidation != 2);
 
         do {
             System.out.println("Nhap ten khoa hoc (Java, .Net, C / C++): ");
@@ -147,7 +148,7 @@ public class Driver {
             }
         } while (!isCourseValid(studentCourse));
 
-        ms.addStudent(new Student(studentId, studentName, studentYearAfterValidation, studentCourse));
+        ms.addStudent(new Student(studentId, studentFamilyName, studentLastName, studentYearAfterValidation, studentCourse));
 
     }
 
@@ -178,14 +179,14 @@ public class Driver {
         return result;
     }
 
-    public boolean isYearValid(int year) {
-        boolean result = false;
-        if (year != 1 && year != 2) {
-            throw new InputMismatchException("Chi nhap 1 hoac 2.");
+    public boolean isYearValid(String year) {
+        boolean isDigit = false;
+        if (year.charAt(0) != '1' && year.charAt(0) != '2') {
+            throw new IllegalArgumentException("Chi nhap 1 hoac 2");
         } else {
-            result = true;
+            isDigit = true;
         }
-        return result;
+        return isDigit;
     }
 
     public String convertCourse(String course) {
@@ -229,30 +230,29 @@ public class Driver {
 
     private void runSearchSort() {
 
-        ArrayList<Student> results = new ArrayList<Student>();
-        System.out.println("Nhap ten hoc sinh can tim: ");
-        String studentName = sc.next();
-        String studentNameLowerCase = studentName.toLowerCase();
+        System.out.println("Nhap ten sinh vien can tim: ");
+        String studentLastName = sc.next();
+        ArrayList<Student> results = ms.searchSortStudent(studentLastName);
 
-        for (int i = 0; i < ms.getStudents().size(); i++) {
-            if (ms.getStudents().get(i).getName().toLowerCase().contains(studentNameLowerCase)) {
-                results.add(ms.getStudents().get(i));
+        if (results.isEmpty()) {
+            System.out.println("Khong tim thay sinh vien " + studentLastName + ".");
+        } else {
+            Collections.sort(results, Comparators.NAMEANDID);
+            System.out.println("Tim thay " + results.size() + " sinh vien co ten " + studentLastName + ":");
+            for (int i = 0; i < results.size(); i++) {
+                results.get(i).displayInformation();
             }
-        }
-
-        Collections.sort(results, Comparators.NAMEANDID);
-        System.out.println("Ket qua tim kiem: ");
-        for (int i = 0; i < results.size(); i++) {
-            results.get(i).displayInformation();
         }
     }
 
     private void runUpdateDelete() {
         String studentId;
         do {
-            System.out.println("Nhap ID hoc sinh can tim: ");
+            System.out.println("Nhap ID sinh vien can tim: ");
             studentId = sc.next();
-            if (!ms.isStudentExisted(studentId)) {
+            if (!isIdValid(studentId)) {
+                System.out.println("ID khong hop le. Yeu cau nhap lai.");
+            } else if (!ms.isStudentExisted(studentId)) {
                 System.out.println("Sinh vien khong ton tai. Yeu cau nhap lai.");
             }
         } while (!ms.isStudentExisted(studentId));
@@ -260,7 +260,7 @@ public class Driver {
         System.out.println("Thong tin hoc sinh so ID " + studentId + " : ");
         ms.searchStudent(studentId).displayInformation();
 
-        System.out.println("Ban muon cap nhat (U) hay xoa (D) hoc sinh? ");
+        System.out.println("Ban muon cap nhat (U) hay xoa (D) sinh vien? ");
         char selection = sc.next().charAt(0);
         if (selection == 'U' || selection == 'u') {
             System.out.println("Bam 1 de cap nhat ID cua sinh vien");
@@ -269,46 +269,66 @@ public class Driver {
             System.out.println("Bam 4 de cap nhat ten khoa hoc (Java, .Net, C / C++) cua sinh vien");
             int updateSelection = sc.nextInt();
             String newId;
+            String newFamilyName;
+            String newLastName;
             String newName;
-            int newYear;
+            String newYear;
             String newCourse;
 
             if (updateSelection == 1) {
                 do {
                     System.out.println("Cap nhat ID: ");
                     newId = sc.next();
-                    if (!ms.isStudentExisted(newId)) {
-                        System.out.println("Cap nhat ID thanh cong");
-                        ms.searchStudent(studentId).setId(newId);
-                    } else {
+                    if (!isIdValid(newId)) {
+                        System.out.println("ID khong hop le. Yeu cau nhap lai");
+                    } else if (ms.isStudentExisted(newId)) {
                         System.out.println("ID da ton tai. Yeu cau nhap lai");
                     }
-                } while (!ms.isStudentExisted(newId));
+                } while (ms.isStudentExisted(newId) || !isIdValid(newId));
+
+                ms.searchStudent(studentId).setId(newId);
+                System.out.println("Cap nhat ID thanh cong.");
             } else if (updateSelection == 2) {
-                // TODO: HAM SAI ROI SUA DI
                 do {
                     System.out.println("Cap nhat ten: ");
-                    newName = sc.next();
-                    if (!ms.isStudentExisted(newName)) {
-                        ms.searchStudent(studentId).setName(newName);
+                    System.out.println("Nhap ho cua sinh vien: ");
+                    newFamilyName = sc.next();
+                    System.out.println("Nhap ten cua sinh vien: ");
+                    newLastName = sc.next();
+
+                    newName = newFamilyName + " " + newLastName;
+                    if (isNameValid(newName)) {
                         System.out.println("Cap nhat ten thanh cong!");
+                        ms.searchStudent(studentId).setFamilyName(newFamilyName);
+                        ms.searchStudent(studentId).setLastName(newLastName);
+                        ms.searchStudent(studentId).setName(newName);
                     } else {
                         System.out.println("Trung ten. Yeu cau nhap lai");
                     }
-                } while (ms.isStudentExisted(newName));
+                } while (!isNameValid(newName));
             } else if (updateSelection == 3) {
+                int newYearAfterValidation = -1;
                 do {
                     System.out.println("Cap nhat hoc ky (1 hoac 2): ");
-                    newYear = sc.nextInt();
-                    if (newYear == 1 || newYear == 2) {
-                        ms.searchStudent(studentId).setYear(newYear);
+                    try {
+                        newYear = sc.next();
+                        isYearValid(newYear);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Chi nhap hoc ky 1 hoac 2. Yeu cau nhap lai.");
+                        continue;
+                    }
+                    newYearAfterValidation = Integer.parseInt(newYear);
+                    if (newYearAfterValidation != 1 && newYearAfterValidation != 2) {
+                        System.out.println("So hoc ky phai la 1 hoac 2. Yeu cau nhap lai.");
+                    } else {
                         System.out.println("Cap nhat hoc ky thanh cong!");
                     }
-                } while (newYear != 1 && newYear != 2);
+                } while (newYearAfterValidation != 1 && newYearAfterValidation != 2);
             } else if (updateSelection == 4) {
                 do {
                     System.out.println("Cap nhat ten khoa hoc (Java, .Net, C / C++): ");
                     newCourse = sc.next();
+                    newCourse = convertCourse(newCourse);
                     if (!newCourse.equals("Java") &&
                             !newCourse.equals(".Net") &&
                             !newCourse.equals("C") &&
@@ -325,6 +345,7 @@ public class Driver {
             }
         } else if (selection == 'D' || selection == 'd') {
             ms.deleteStudent(studentId);
+            System.out.println("Xoa sinh vien thanh cong!");
         }
     }
 
